@@ -1,0 +1,208 @@
+---
+title: "RMarkdown Demo"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### This is an introduction to R Studio, R Markdown, and exploring data in R. 
+
+
+## R Studio
+R Studio is a great way to learn R! Check out the different parts of your environment. **(Tour here!)**
+Optional: Watch on your own: https://youtu.be/dq7pjpieYw4
+
+
+
+## R Markdown
+R Studio makes R Markdown very easy!
+
+R Markdown is a Markdown language (similiar to Jupyter Notebooks for Python)
+
+Cheat sheet for using R Markdown: https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf
+
+# This is a giant header
+## This is smaller
+### Even smaller
+#### Smaller yet
+##### This is the smallest heading
+
+You can also just write in plain text:
+
+**This will be BOLD**
+
+*This will be in italics*
+
+~~this will be strikethrough~~
+
+You can make tables, quotes, lists, etc. - check out the cheat sheet for more ways to use Markdown. 
+
+```{r}
+#This is a comment within an R code chunk
+
+#Hello this is my first comment
+
+ThisisRcode <- 4+2
+
+firstvar = 4+2
+
+```
+
+
+## Get Comfortable Coding with R
+
+
+### Before we get started, let's talk about Data Frames in R
+MATLAB primarily is matrix-based but R is based around the data frame (R has many other data types, but the data frame is the one we will be using most in this class)
+
+A data frame is used for storing data tables. It is a list of vectors of equal length.
+
+**Example of data frame:**
+```{r}
+mtcars
+```
+
+**if we want to know the structure of a variable we can use the function str()*
+```{r}
+str(mtcars)
+```
+
+
+### There are great datasets already in R for you to play with and learn about how to use data in R. Check them all out here: https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/00Index.html
+
+Today, we will perform a simple *Exploratory Data Analysis* on a dataset from a study exploring the pharmokinetics of indomethacin. 
+
+### Details (ALWAYS LEARN ABOUT THE CONTEXT OF YOUR PROBLEM AND DATA BEFORE LOOKING AT THE DATA ITSELF)
+
+Indomethacin is used to relieve pain, swelling, and joint stiffness caused by arthritis, gout, bursitis, and tendonitis. It is also used to relieve pain from various other conditions. This medication is known as a nonsteroidal anti-inflammatory drug (NSAID). - https://www.webmd.com/drugs/2/drug-8880-5186/indomethacin-oral/indomethacin-oral/details
+
+Each of the six subjects in this study were given an intravenous injection of indometacin. The Indometh data frame has 66 rows and 3 columns (fields) of data on the pharmacokinetics of indometacin (or, older spelling, 'indomethacin').
+
+First, always read the description of each of the fields:
+
+* Subject: an ordered factor with containing the subject codes. The ordering is according to increasing maximum response.
+* time: a numeric vector of times at which blood samples were drawn (hr).
+* conc: a numeric vector of plasma concentrations of indometacin (mcg/ml).
+
+*note: variable names in R are case sensitive* (time is different than Time)
+
+### Now that we have a dataset to work with, here are the questions we will attempt to answer today:
+1. What does the data look like? How many subjects were in the study? How many measurements were taken for each subject? Over what range of time? What was the range of concentrations observed? 
+2. What is the mean, median, standard deviation of concentration?
+3. How many blood draws total were taken during the study?
+4. Are there temporal trends?
+5. Compare the means, quartiles, and outliers for all of the Subjects.
+6. Find the median of the conc of Subject 1. 
+
+
+#### 1. First, what does the data look like:
+
+```{r}
+Indometh
+```
+
+### what is the structure of the data?
+```{r}
+str(Indometh)
+#not our typical data frame format, but we can still work with it. Let's make it easier...
+I <- data.frame(Indometh)
+```
+
+### How many subjects were in the study? How many measurements were taken for each subject? Over what range of time? What was the range of concentrations observed? 
+To get a quick summary of the data, it is easy to use the function summary()
+
+```{r}
+summary(I)
+length(unique(Indometh$Subject))
+```
+
+#### 2-3. Use Built-In functions to quickly determine basic statistics. Use dataframe$column to look at specific columns
+
+```{r}
+median(Indometh$conc)
+```
+
+```{r}
+sd(Indometh$conc)
+mean(Indometh$conc)
+length(Indometh$conc)
+```
+
+#### 4. We want to visualize when the blood draws were taken over time. We could use the native plotting functions in R but these are not as powerful as ggplot2
+Type into your console: install.packages("ggplot2")
+
+When using a library, make sure to call it within the R code BEFORE you use it! 
+
+Tutorial on ggplot2! http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html
+
+A typical ggplot initation call looks like:  ggplot(dataframe, aes(x=Col, y=OtherCol)) and then you add layers to the plot that you generated
+
+```{r}
+library(ggplot2)
+ggplot(Indometh, aes(x=Subject, y=conc)) 
+
+```
+
+
+Why didn't that work? Because we need to specify layers for the ggplot. Let's try a bar plot: 
+
+```{r}
+ggplot(Indometh, aes(x=time)) + geom_bar(stat="count")
+
+```
+
+Now let's add some additional layers of visual information and formatting like colors and themes. 
+
+```{r}
+ggplot(Indometh, aes(x=time)) + geom_bar(stat="count", fill="blue")
+
+
+ggplot(Indometh, aes(x=time)) + geom_bar(stat="count", fill="blue")+theme_bw()
+```
+
+### So how does the concentration change over time?
+
+```{r}
+ggplot(I, aes(x=time, y=conc, group=Subject)) + geom_boxplot()
+```
+
+What if I wanted to see all the points? Stack geom_plots on top of each other:
+
+```{r}
+ggplot(Indometh, aes(x=Subject, y=conc)) + geom_boxplot()+ geom_point()
+```
+
+Now, what if we wanted to look at what is happening to the Indometh concentration over time within each of the subjects? 
+
+We can add col = Variable and plot the points!
+
+```{r}
+ggplot(Indometh, aes(x=Subject, y=conc, col = time)) + geom_boxplot() + geom_point()
+# col = color
+# geom_point() adds points
+# geom_boxplot() adds a boxplot
+
+```
+
+
+#### 6. Find the median of the conc of Subject 1. 
+
+```{r}
+median(Indometh[Indometh$Subject==1,]$conc)
+```
+
+Is there a cleaner way? Don't be afraid to google how others are doing things. You may find a package you have never heard of that does EXACTLY what you want!
+
+Try: install.packages("dplyr"). This has a very nice filter function that makes the question easy!
+
+```{r}
+library(dplyr)
+
+Sub1 <- filter(Indometh, Indometh$Subject==1)
+
+median(Sub1$conc)
+
+```
+

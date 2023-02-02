@@ -1,0 +1,73 @@
+#############################
+##  	 Github 	   ##
+#############################
+
+$ git --version # make sure it installed correctly
+$ git config --global user.name “Jessilyn Dunn” # so people know who is checking in and out
+$ git config --global user.email jessilyn.dunn@duke.edu
+$ git config --list 
+$ git config --global core.editor "nano"
+
+# if you mess up and want to edit the config file directly, it is just a text file!
+$ git config --global --edit
+$ git config –help # or git help config # to figure out what the commands do
+
+# Initialize a new git repository from an existing code file that you have locally or on DCC:
+
+$ mkdir myFirstGit # prior to this command, cd to move into the directory where you want to create your new github folder.
+$ cd 
+$ ls -la
+$ git init
+$ ls -la (see the .git directory) 
+$ nano mySettings.R
+	# Ctrl O
+	# Ctrl X
+$ git status
+
+$ nano .gitignore # if we want git to ignore certain files, use git ignore
+*.py # to tell git tracking to ignore all python files
+# Ctrl O
+	# Ctrl X
+$ git status
+$ rm -rf .git # stops tracking the project with git
+$ ls -la # note that the .git file disappears
+$ git init # restore tracking 
+$ ls -la # note that the .git file reappears
+
+# using git, there is a “staging area” where we can commit just the specific changes we made to the file
+$ nano mySettings.R
+	Here is a change
+# Ctrl O
+	# Ctrl X
+$ git log
+$ git diff # shows us the difference in our code, but we haven’t added anything to the staging area yet, so there will be no differences tracked yet
+$ git add -A # lets us add every file to the staging area (git commit would add these to your tracked files); could also do git add .gitignore or another file
+$ echo adding another change >> mySettings.R 
+$ git diff  # shows us the changes that we’ve made to the code – shows what we deleted and what we added
+$ git reset # removes everything from the staging area 
+$ git diff 
+$ git add -A
+$ git commit -m “my first commit”
+$ git log #shows us the commit we just made
+# note: we have committed the changes locally. In the future, we will want to push these changes to our “master” branch where we are collaborating with our team on writing  code together.
+
+##. Tracking a remote repo that already exists – and begin working on it.
+
+$ git clone https://github.com/jessilyn/BME590_practice .
+$ cd BME590_practice/
+$ git remote -v # gives us information about what version of the repo we are working on
+$ git branch -a # gives us info about what branches exist
+
+$ nano test1.txt – make some changes (e.g., add a new line “edit #2”)
+$ git diff 
+$ git status
+$ git add -A #adds all changes
+$ git status
+$ git commit -m "added a function" # committed these locally but now want to push these to the shared repo so other people can access it. Since other people have been pushing code while we’ve been working, we want to first do a git pull to make sure that we are up to date with their changes:
+
+$ git pull origin master  #nothing has changed remotely 
+
+$ git push origin master # origin is the name of our local repo; master is the master branch that we want to push to ## note: Github now requires two factor authentication to push your code, so you will need to set this up. Follow https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+
+If you want to create a new branch to work on a new feature, do:
+$ git branch <nameOfBranch>

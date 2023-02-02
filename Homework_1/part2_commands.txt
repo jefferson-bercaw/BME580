@@ -1,0 +1,30 @@
+# 1. 
+
+$ scp covid_data.csv.gz jrb187@dcc-login.oit.duke.edu:/hpc/home/jrb187
+
+# 2.
+
+zcat covid_data.csv.gz | head -n 5
+zcat covid_data.csv.gz | tail -n 5
+
+# 3.
+
+zcat covid_data.csv.gz | awk -F, 'END{print NF,NR}'
+
+# 4
+zcat covid_data.csv.gz | uniq -c | wc -l
+
+# 5. 
+
+zcat covid_data.csv.gz | grep -v 9999-99-99 | awk -F',' '{print $5}' | uniq -c | sort -n | tail -n 1
+
+# 5a.
+
+zcat covid_data.csv.gz | grep 9999-99-99 | wc -l 
+
+# 6.
+zcat covid_data.csv.gz | sed 's/9999-99-99/NA/g' | tail -l
+
+# 7. 
+zcat covid_data.csv.gz | sed 's/,/\t/g' | tail -l
+

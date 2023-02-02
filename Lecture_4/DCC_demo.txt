@@ -1,0 +1,118 @@
+#############################
+##    	Demo for    	   ## 
+##    Cluster Computing    ##
+#############################
+
+Notes: VPN connection may be needed to connect to the Duke Compute Cluster (DCC)
+
+#################
+## Demo Part 1 ##
+#################
+
+> ssh jd391@dcc-login.oit.duke.edu; 
+#note: you will be prompted for a password that you cannot see as it is typed in & two-factor authentication
+# note: I will switch the command prompt to $ when we are on the DCC, and > when we are in an interactive session with R or another program on the DCC. Hashtags will be used to include comments.
+
+$ module avail
+
+# Run R in interactive mode:
+$ module load R/3.2.5
+$ R
+> 2+2
+> a<- 1+2
+> vec<- c(2,3,4)
+> vec + a
+> q() # or quit()
+# n for save workspace image
+
+
+#################
+## Demo Part 2 ##
+#################
+
+# Write a file using nano
+$ nano hello.sh
+#!/bin/bash
+echo "hello world!"
+# ctrl O
+# ctrl X
+
+$ echo adding a line >> hello.sh # Add to file
+$ less hello.sh
+$ echo “hi” > hello.sh # Single print
+$ less hello.sh
+
+# Slow your script down using “sleep”:
+$ nano hello_slow.sh
+#!/bin/bash
+echo hello;
+sleep 10;
+echo world!
+# ctrl O
+# ctrl X
+
+
+#make a directory on the DCC
+$ mkdir demo
+$ cd demo
+
+# Create a simple shell script to either run in interactive mode or submit as a job to dcc
+
+
+#################
+## Demo Part 3 ##
+#################
+
+$ nano job.sh
+#!/bin/bash
+#SBATCH --job-name=demo
+#SBATCH --partition=common
+#SBATCH --nodes=1  # num. nodes
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1  # num. cores
+#SBATCH --output=demo.out  # stdout
+#SBATCH --error=demo.e  # stderr
+#SBATCH --mem-per-cpu=1gb
+#SBATCH --time=0-01:00 # time limit (D-HH:MM)
+
+cd ~/demo
+sleep 30;
+echo hello world! > out.txt 
+
+$ bash job.sh
+$ cd ..
+
+# Slurm tutorial – how to submit jobs on DCC - https://rc.duke.edu/dcc/dcc-user-guide/#toc_10
+
+$ sbatch job.sh
+
+# to check on the job status
+$ squeue -j <jobid> 
+# or squeue -u <netid>
+
+# to cancel a job:
+$ scancel <jobid>
+
+#################
+## Demo Part 4 ##
+#################
+
+# Moving files back & forth: 
+$ sftp jd391@dcc-login.oit.duke.edu
+# note: you can use scp instead of sftp
+# note: you will be prompted for a password that you cannot see as it is typed in & two-factor authentication
+# note: I will switch the command prompt to $ when we are on the DCC
+
+$ pwd
+$ ls
+$ lpwd
+$ cd demo #note: the “home” shortcut ~ does not work on remote on sftp, so if you need to specify a file path, you must use the absolute path name (e.g. cd /hpc/home/jd391/demo *not* cd ~/demo)
+$ lcd ~/Desktop
+$ lpwd
+
+# Put from local to remote
+# create a text file on your desktop called test.txt
+$ put test.txt .
+
+# get from remote to local
+$ get job.sh .

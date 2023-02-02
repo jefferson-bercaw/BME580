@@ -1,0 +1,74 @@
+###################################
+##   Awk, Grep, Tr, RegEx Demo   ##
+###################################
+
+## Download the file smartwatch_data.csv (in this demo, I assume the file is downloaded automatically unto your downloads folder, located at ~/Downloads - if this is not the case for you, you will have to change the path in the commands below accordingly)
+
+## The > below represents the prompt on your command line. After the prompt is the command that you should type into the command line. The # indicates a comment, which will not be interpreted by the command line.
+
+
+> cd ~/Desktop # change your working directory to your desktop
+> mkdir test # create a new directory (called test)
+> cd test # move into your new directory (called test)
+> cp ../smartwatch_data.csv . # copy the file from your desktop into your working directory (called test)
+> rm ../smartwatch_data.csv # remove the file from your desktop
+
+
+# how many lines are in the file smartwatch_data.csv?
+
+wc -l smartwatch_data.csv # what we learned last class
+awk 'END { print NR }' smartwatch_data.csv # note the difference in the number of lines between the two methods. We will defer to wc -l for our work in this class.
+
+#use backticks to wrap a print or echo command around another command's output:
+> echo "Number of files in this directory: `wc -l smartwatch_data.csv | awk '{print $1}'`" 
+
+# how many columns are in the file smartwatch_data.csv?
+awk -F',' '{ print NF; exit }' smartwatch_data.csv 
+
+# Let's look at specific columns
+cat smartwatch_data.csv | cut -d',' -f2
+awk 'BEGIN { FS = "," } ; { print $2 }' smartwatch_data.csv
+
+#look at rows where the type of activity is running
+awk '/run/ {print}' smartwatch_data.csv
+awk -F',' '{ if($1 == "run") print $0;}' smartwatch_data.csv
+
+#How many rows are there where the type of activity is running?
+awk '/run/ {print}' smartwatch_data.csv 
+
+#print only the type of activity and the HR
+awk -F',' '{print $1, $NF}' smartwatch_data.csv 
+
+
+## TR DEMO ## 
+
+cat smartwatch_data.csv | tr "," "\\t" > tab_delimited.csv. # print output to a new file
+
+cat smartwatch_data.csv | tr "," "*" > asterisk_delimited.csv
+
+
+## GREP DEMO ##
+
+#look at rows where the type of activity is running
+grep run smartwatch_data.csv
+
+#look at all measurements from a specific date
+grep 6/7/26 smartwatch_data.csv
+
+## REGEX ##
+
+cat smartwatch_data.csv | tr '[a-z]' '[A-Z]'
+
+
+
+---- just for fun Awk example ---
+
+#To print the squares of first numbers from 1 to n say 6:
+
+$ awk 'BEGIN { for(i=1;i<=6;i++) print "square of", i, "is",i*i; }'
+square of 1 is 1
+square of 2 is 4
+square of 3 is 9
+square of 4 is 16
+square of 5 is 25
+square of 6 is 36
